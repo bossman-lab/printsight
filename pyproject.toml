@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "printsight"
+version = "0.1.0"
+description = "AI-powered 3D print quality inspection — detect stringing, layer issues, and warping from a photo"
+authors = [
+    {name = "bossman-lab", email = "keeper.lantern@proton.me"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "opencv-python-headless",
+]
+
+[project.scripts]
+printsight = "printsight.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["printsight*"]
