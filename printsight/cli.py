@@ -77,6 +77,10 @@ def print_report(result: dict, json_output: bool) -> None:
     print(f"       Lifted:    {w['details']['lifted_corners']} corner(s)")
     print()
 
+    if result.get("annotated_path"):
+        print(f"  📸 Annotated image saved: {result['annotated_path']}")
+        print()
+
     print(f"{'='*50}\n")
 
 
@@ -86,11 +90,14 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""Examples:
   printsight photo.jpg
+  printsight photo.jpg --annotate
   printsight photo.jpg --json
-  printsight photo.jpg -o report.json
+  printsight photo.jpg -o report.json --annotate
 """,
     )
     parser.add_argument("image", help="Path to the 3D print photo")
+    parser.add_argument("-a", "--annotate", action="store_true",
+                        help="Save annotated image with defect markings")
     parser.add_argument("--json", action="store_true",
                         help="Output as JSON")
     parser.add_argument("-o", "--output", metavar="FILE",
@@ -101,7 +108,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        result = analyze(args.image)
+        result = analyze(args.image, annotate=args.annotate)
         print_report(result, json_output=args.json)
 
         if args.output:
