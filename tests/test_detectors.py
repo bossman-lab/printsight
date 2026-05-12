@@ -107,6 +107,37 @@ def test_missing_file():
     assert result.returncode != 0, "Should fail on missing file"
 
 
+def test_annotate_output():
+    """--annotate flag should produce an annotated image."""
+    result = subprocess.run(
+        [sys.executable, "-m", "printsight.cli",
+         os.path.join(TEST_DATA, "stringing_test.png"), "--annotate"],
+        capture_output=True, text=True, cwd=PROJECT_ROOT
+    )
+    # Check for annotated image in output
+    assert "Annotated image saved" in result.stdout, \
+        f"Missing annotation msg: {result.stdout[:300]}"
+    # Check the file exists
+    ann_path = os.path.join(TEST_DATA, "stringing_test_annotated.png")
+    assert os.path.exists(ann_path), f"Annotated file not found: {ann_path}"
+    print(f"\n  Annotated image: {ann_path} ({os.path.getsize(ann_path)} bytes)")
+
+
+def test_annotate_json():
+    """--annotate --json should include annotated_path in output."""
+    result = subprocess.run(
+        [sys.executable, "-m", "printsight.cli",
+         os.path.join(TEST_DATA, "warping_test.png"), "--annotate", "--json"],
+        capture_output=True, text=True, cwd=PROJECT_ROOT
+    )
+    data = json.loads(result.stdout)
+    assert "annotated_path" in data, \
+        f"Missing annotated_path in JSON: {list(data.keys())}"
+    ann_path = data["annotated_path"]
+    assert os.path.exists(ann_path), f"Annotated file not found: {ann_path}"
+    print(f"\n  JSON annotated_path: {ann_path}")
+
+
 if __name__ == "__main__":
     os.makedirs(TEST_DATA, exist_ok=True)
 
